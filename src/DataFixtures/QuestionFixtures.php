@@ -32,16 +32,14 @@ class QuestionFixtures extends Fixture implements DependentFixtureInterface
             $user=$this->getReference("user-$number");
 
             $question = new Question();
-            $question->setTitre($faker->sentence( 10, true));
+            $question->setTitre($faker->sentence( 5, true));
             $question->setContenu("$faker->realText(200, 2) ?");
             $question->setDateCreation($faker->dateTimeBetween('-3 years', 'now'));
             $question->setUtilisateur($user);
+            
+            $manager->persist($question);
 
-             
-
-              $manager->persist($question);
-
-              $this->addReference("question-$i", $question);
+            $this->addReference("question-$i", $question);
           }
 
         $manager->flush();

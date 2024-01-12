@@ -4,5 +4,39 @@
 
 {% block body %}
 
-    di
+    {% for question in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ question }}
+        </div>
+    {% endfor %}
+    
+    <h1> Liste des Questions</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Titre</th>
+                <th scope="col">Auteur</th>
+                <th scope="col">Avatar</th>
+                <th scope="col">Posté le</th>
+                {# <th scope="col"></th> #}
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+                <tr>
+                    <th scope="row"><a href="{{path('question_details', {id: question.id})}}" class="link-underline link-underline-opacity-0 text-dark">{{ question.titre }}</a></th>
+                    <td class="fst-italic">{{ question.utilisateur.nom }}</td>
+                    <td><img src="{{ asset(question.utilisateur.avatar) }}" alt="{{ question.utilisateur.nom }}"></td>
+                    <td>{{ question.dateCreation|date('d.m.Y') }}</td>
+                    {# <td><a href="{{ path('app_one_question', { id: question.id }) }}" class="btn btn-primary">Voir le question</a></td> #}
+                </tr>
+            {% else %}
+                <tr>
+                    {# <td colspan="4" class="text-align ">Aucun question</td> #}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

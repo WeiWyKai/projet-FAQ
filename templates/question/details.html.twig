@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello QuestionController!{% endblock %}
+
+{% block body %}
+
+  {% for question in app.flashes('success') %}
+    <div class="alert alert-success">
+      {{ question }}
+    </div>
+  {% endfor %}
+
+  <div class="m-3 p-3 border border-3 border-dark bg-light shadow-lg rounded-2">
+    <h1>"{{ question.titre }}"</h1>
+    <h2>de <span class="fst-italic text-secondary"><u>{{ question.utilisateur.nom }}</u></span></h2>
+    <small class="text-end d-block fst-italic">Posté le {{ question.dateCreation|date("d/m/Y") }}</small>
+    <p class="m-3 p-3 border border-dark rounded-2 shadow"> {{ question.contenu }}</p>
+  </div>  
+
+  {% for reponse in reponses %}
+    <div class="container mx-auto mb-2 p-3 border  rounded-2 shadow 
+    {% if question.utilisateur.id == reponse.utilisateur.id %}
+      text-light border-4 border-danger bg-secondary
+    {% else %}
+      border-dark bg-light
+    {% endif %}
+    ">
+      <div class="row">
+        <div class="col-3">
+          <img src="{{asset(reponse.utilisateur.avatar)}}" >
+          <p class="fw-bold fst-italic"> {{ reponse.utilisateur.nom}}</p>
+          {% if question.utilisateur.id == reponse.utilisateur.id %}
+            <small class=" badge rounded-pill mb-2 text-bg-danger"> Auteur de la question</small>
+          {% endif %}
+          <small class="fst-italic d-block"> Posté le {{ reponse.dateCreation|date("d/m/Y") }}</small>
+        </div>        
+        <div class="col-9 align-self-center">
+          - {{reponse.contenu}}
+        </div>
+      </div>
+    </div>  
+  {% endfor %}
+
+{% endblock %}

@@ -22,7 +22,7 @@ class Question
     #[ORM\Column(length: 350)]
     private ?string $contenu = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column (type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateCreation = null;
 
     #[ORM\OneToMany(mappedBy: 'Question', targetEntity: Reponse::class, orphanRemoval: true)]
