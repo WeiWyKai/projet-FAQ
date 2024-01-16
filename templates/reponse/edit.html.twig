@@ -11,8 +11,10 @@
   {% endfor %}
 
   <div class="m-5">
-    {{ form(editForm) }}
-  </div>
+    {% include 'reponse/_reponseForm.html.twig' with {
+      form: editForm,
+      labelButton: 'Modifier ma réponse'
+    } %}  </div>
     
 {% endblock %}
 

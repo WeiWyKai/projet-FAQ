@@ -20,12 +20,14 @@
                     <a class="btn btn-outline-dark me-5" href="{{path('all_questions')}}">F.A.Q.</a>
                     {% if app.user %}
 
-                        <img 
+                        <a href="{{path('edit_profil')}}" class="nav-link">
+                            <img 
                             src="{{app.user.avatar}}" 
                             alt="{{app.user.nom}}" 
                             class="img-thumbnail rounded-circle"
                             style="height:75px; width:75px"
-                        >
+                            >
+                        </a>
                         <small class="mx-3 fst-italic"><strong>{{app.user.nom}}</strong></small>
                         <a class="btn btn-outline-danger ms-auto" href="{{path('app_logout')}}">Déconnexion</a>
     

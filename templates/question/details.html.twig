@@ -25,9 +25,10 @@
     {{ form_errors(answerForm) }}
     
     {% if app.user %}
-      {{ form_start(answerForm) }}
-          {{ form_row(answerForm.contenu) }}
-      {{ form_end(answerForm) }}
+      {% include 'reponse/_reponseForm.html.twig' with {
+        form: answerForm,
+        labelButton: 'Poster ma réponse'
+      } %}
     {% else %}
       <p class="text-center"> Veuillez vous <a href="{{path('app_login')}}">connecter</a> ou vous <a href="{{path('app_register')}}">inscrire</a> pour répondre à cette question</p>
     {% endif %}
@@ -61,7 +62,7 @@
         {% if is_granted('REPONSE_VIEW', reponse) %}
           <div class="col-2">
             <a class="d-block btn btn-primary my-3" href="{{path('edit_reponse',{id:reponse.id})}}">Modifier</a>
-            <a class="d-block btn btn-danger" href"">Supprimer</a>
+            <a class="d-block btn btn-danger" href="{{path('delete_reponse', {id:reponse.id})}}">Supprimer</a>
           </div>
         {% endif %}
       </div>

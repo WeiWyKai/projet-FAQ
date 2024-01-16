@@ -71,44 +71,51 @@ class RegistrationFormType extends AbstractType
                     ])
                 ]
             ])
-            ->add('agreeTerms', CheckboxType::class, [
-                                'mapped' => false,
-                'attr' => [
-                'class' => 'form-check-input '
-                ],
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'You should agree to our terms.',
-                    ]),
-                ],
-            ])
-            ->add('plainPassword', PasswordType::class, [
-                                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false, //plainPassword n'existe pas du coup
-                'attr' => [
-                    'autocomplete' => 'new-password',
-                    'class' => 'form-control '],
-                'label' => "Mot de Passe: ",
-                'help' => "Le mot de passe doit contenir minimum 6 caractères",
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuilleez entrer un mot de passe',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Le mot de passe doit contenir au minimum {{ limit }} charactères',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
-            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Valider',
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ],
-            ])
+            ]);
+
+        //Si la clé "is_profil" est a false, alors il s'agit du formulaire d'inscription , donc on ajoute a notre formulaire , le champs de mot de passe et l'acceptation des conditions
+        if(!$options['is_profil']){
+            $builder    
+                ->add('agreeTerms', CheckboxType::class, [
+                                    'mapped' => false,
+                    'attr' => [
+                    'class' => 'form-check-input '
+                    ],
+                    'constraints' => [
+                        new IsTrue([
+                            'message' => 'You should agree to our terms.',
+                        ]),
+                    ],
+                ])
+                ->add('plainPassword', PasswordType::class, [
+                                    // instead of being set onto the object directly,
+                    // this is read and encoded in the controller
+                    'mapped' => false, //plainPassword n'existe pas du coup
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                        'class' => 'form-control '],
+                    'label' => "Mot de Passe: ",
+                    'help' => "Le mot de passe doit contenir minimum 6 caractères",
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuilleez entrer un mot de passe',
+                        ]),
+                        new Length([
+                            'min' => 6,
+                            'minMessage' => 'Le mot de passe doit contenir au minimum {{ limit }} charactères',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                    ],
+                ]);
+
+        }    
+          
         ;
     }
 
@@ -116,6 +123,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'is_profil' => false
         ]);
     }
 }

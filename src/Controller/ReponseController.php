@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Reponse;
 use App\Form\AnswerFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,9 +45,17 @@ class ReponseController extends AbstractController
         ]);
     }
 
-    // #[Route('/reponse/{id}/delete', name:'delete_reponse')]
-    // public function deleteReponse()
-    // {
+    #[IsGranted('REPONSE_EDIT', 'reponse',"YOU SHALL NOT PASS!!! modification impossible")]
+    #[Route('/reponse/{id}/delete', name:'delete_reponse')]
+    public function deleteReponse(Reponse $reponse, EntityManagerInterface $entityManager)
+    {  
+        $entityManager->remove($reponse); 
+        $entityManager->flush(); 
 
-    // }
+        $this->addFlash('success', "Votre réponse a correctement été supprimé!");
+
+        return $this->redirectToRoute('question_details', [
+            'id' => $reponse->getQuestion()->getId()
+        ]);
+    }
 }
