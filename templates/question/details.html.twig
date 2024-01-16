@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello QuestionController!{% endblock %}
+{% block title %}Les réponses{% endblock %}
 
 {% block body %}
 
   {% for question in app.flashes('success') %}
-    <div class="alert alert-success">
+    <div class="alert alert-success m-3">
       {{ question }}
     </div>
   {% endfor %}
@@ -17,6 +17,22 @@
     <p class="m-3 p-3 border border-dark rounded-2 shadow"> {{ question.contenu }}</p>
   </div>  
 
+  {% if reponses == null %}
+    <p class=" m-3 p-3 border text-center rounded-2 shadow bg-light"> Il n'y pas encore de réponse. Soyez le premier à répondre à cette question!</p>
+  {% endif %}
+
+  <div class="m-3">
+    {{ form_errors(answerForm) }}
+    
+    {% if app.user %}
+      {{ form_start(answerForm) }}
+          {{ form_row(answerForm.contenu) }}
+      {{ form_end(answerForm) }}
+    {% else %}
+      <p class="text-center"> Veuillez vous <a href="{{path('app_login')}}">connecter</a> ou vous <a href="{{path('app_register')}}">inscrire</a> pour répondre à cette question</p>
+    {% endif %}
+  </div>
+  
   {% for reponse in reponses %}
     <div class="container mx-auto mb-2 p-3 border  rounded-2 shadow 
     {% if question.utilisateur.id == reponse.utilisateur.id %}
@@ -33,12 +49,24 @@
             <small class=" badge rounded-pill mb-2 text-bg-danger"> Auteur de la question</small>
           {% endif %}
           <small class="fst-italic d-block"> Posté le {{ reponse.dateCreation|date("d/m/Y") }}</small>
+          {% if reponse.dateEdit is not null %}
+          <small class="fst-italic d-block"> Modifié le {{ reponse.dateEdit|date("d/m/Y à H:i:s") }}</small>
+          {% endif %}
         </div>        
-        <div class="col-9 align-self-center">
+        <div class="col-7 align-self-center">
           - {{reponse.contenu}}
         </div>
+        {# condition if normale #}
+        {# {% if reponse.utilisateur is same as(app.user) %} #}
+        {% if is_granted('REPONSE_VIEW', reponse) %}
+          <div class="col-2">
+            <a class="d-block btn btn-primary my-3" href="{{path('edit_reponse',{id:reponse.id})}}">Modifier</a>
+            <a class="d-block btn btn-danger" href"">Supprimer</a>
+          </div>
+        {% endif %}
       </div>
     </div>  
   {% endfor %}
+ 
 
 {% endblock %}

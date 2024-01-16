@@ -19,7 +19,7 @@ class Question
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 350)]
+    #[ORM\Column(length: 350, type: Types::TEXT, nullable: true)]
     private ?string $contenu = null;
 
     #[ORM\Column (type: Types::DATETIME_MUTABLE)]

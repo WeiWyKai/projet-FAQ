@@ -25,6 +25,7 @@ class UserFixtures extends Fixture
             $user->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
             $user->setEmail($faker->email);
             $user->setNom($faker->name);
+            $user->setIsVerified($faker->boolean);
             $manager->persist($user);
 
             //Enregistre l'objet $user dans une référence avec un nom unique!

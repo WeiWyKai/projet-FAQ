@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ReponseController!{% endblock %}
+
+{% block body %}
+
+  {% for reponse in app.flashes('success') %}
+    <div class="alert alert-success m-3">
+      {{ reponse }}
+    </div>
+  {% endfor %}
+
+  <div class="m-5">
+    {{ form(editForm) }}
+  </div>
+    
+{% endblock %}
+

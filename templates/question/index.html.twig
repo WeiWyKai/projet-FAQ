@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello QuestionController!{% endblock %}
+{% block title %}F.A.Q.{% endblock %}
 
 {% block body %}
 
@@ -9,9 +9,11 @@
             {{ question }}
         </div>
     {% endfor %}
-    
-    <h1> Liste des Questions</h1>
 
+
+    
+    <h1 class="m-3"> Liste des Questions</h1>
+    <a href="{{path('new_question')}}" class=" btn btn-outline-dark d-block mx-5 my-2 shadow-lg bg-secondary"> Poser une question</a>
     <table class="table">
         <thead>
             <tr>
