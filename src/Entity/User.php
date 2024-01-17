@@ -149,7 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         {
             return 'imgs/user_default.jpg';
         }
-        return $this->avatar;
+        return "avatars/{$this->avatar}";
     }
 
     public function setAvatar(?string $avatar): static

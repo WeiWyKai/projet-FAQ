@@ -44,7 +44,7 @@
     ">
       <div class="row">
         <div class="col-3">
-          <img src="{{asset(reponse.utilisateur.avatar)}}" >
+          <img src="{{asset(reponse.utilisateur.avatar)}}" style="height:125px; width:125px" >
           <p class="fw-bold fst-italic"> {{ reponse.utilisateur.nom}}</p>
           {% if question.utilisateur.id == reponse.utilisateur.id %}
             <small class=" badge rounded-pill mb-2 text-bg-danger"> Auteur de la question</small>

@@ -30,7 +30,7 @@
                 <tr>
                     <th scope="row"><a href="{{path('question_details', {id: question.id})}}" class="link-underline link-underline-opacity-0 text-dark">{{ question.titre }}</a></th>
                     <td class="fst-italic">{{ question.utilisateur.nom }}</td>
-                    <td><img src="{{ asset(question.utilisateur.avatar) }}" alt="{{ question.utilisateur.nom }}"></td>
+                    <td><img style="height:125px; width:125px" src="{{ asset(question.utilisateur.avatar) }}" alt="{{ question.utilisateur.nom }}"></td>
                     <td>{{ question.dateCreation|date('d.m.Y') }}</td>
                     {# <td><a href="{{ path('app_one_question', { id: question.id }) }}" class="btn btn-primary">Voir le question</a></td> #}
                 </tr>
