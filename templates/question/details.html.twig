@@ -23,8 +23,19 @@
     {% if question.dateEdit != null %}
       <small class="text-end d-block fst-italic">Modifié le {{ question.dateEdit|date("d/m/Y à H:i:s") }}</small>
     {% endif %}
-      <a class="text-end d-block fst-italic" href="">Signaler la question</a>
+
     <p class="m-3 p-4 border border-dark rounded-2 shadow"> {{ question.contenu }}</p>
+   
+    {# Bouton Report #}
+    {% if is_granted('USER_ACCESS') %}
+      <form
+        action="{{ path('reportQA', { id: question.id, type:'question' }) }}"
+        method="post"
+      >
+        <input type="hidden" name="_token" value="{{ csrf_token('reportQA-question-'~ question.id) }}"> 
+        <button type="submit" class="btn fst-italic link-danger mb-2">Signaler la question</button>
+      </form>
+    {% endif %}
 
     {% if is_granted('EDIT_QUESTION', question) %}
       <a class="btn btn-outline-primary fst-italic mb-2" href="{{path('edit_question',{id:question.id})}}">Modifier ma question</a>
@@ -82,7 +93,17 @@
           {% if reponse.dateEdit is not null %}
           <small class="fst-italic d-block"> Modifié le {{ reponse.dateEdit|date("d/m/Y à H:i:s") }}</small>
           {% endif %}
-          <a class="fst-italic d-block" href=""> Signaler la réponse</a>
+
+          {# Bouton Report #}
+          {% if is_granted('USER_ACCESS') %}
+            <form
+              action="{{ path('reportQA', { id: reponse.id, type:'reponse' }) }}"
+              method="post"
+            >
+              <input type="hidden" name="_token" value="{{ csrf_token('reportQA-reponse-'~ reponse.id) }}"> 
+              <button type="submit" class="btn fst-italic link-danger">Signaler la réponse</button>
+            </form>
+          {% endif %}
         </div>        
         <div class="col-8 px-4 align-self-center">
           {{reponse.contenu}}

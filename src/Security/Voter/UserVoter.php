@@ -19,8 +19,9 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
+        if($attribute === self::ACCESS){
+            return true;
+        }
         return in_array($attribute, [self::ACCESS])
             && $subject instanceof \App\Entity\User;
     }
@@ -36,8 +37,6 @@ class UserVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::ACCESS:
-                // logic to determine if the user can EDIT
-                // return true or false
                 return $this->security->isGranted('ROLE_USER');
                 break;
         }

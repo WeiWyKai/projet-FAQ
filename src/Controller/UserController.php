@@ -2,18 +2,24 @@
 
 namespace App\Controller;
 
+use App\Entity\Question;
 use App\Entity\Reponse;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Repository\UserRepository;
+use App\Repository\QuestionRepository;
+use App\Repository\ReponseRepository;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
@@ -91,6 +97,64 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('edit_profil');
     }
+
+    #[IsGranted('USER_ACCESS')]
+    #[Route('/{type}/{id}/report', name:'reportQA' ,requirements: ['id' => '\d+', 'type' => 'question|reponse'])]
+    public function reportQA(string $type ,int $id, MailerInterface $mailer, Request $request, QuestionRepository $questionRepository, ReponseRepository $reponseRepository):RedirectResponse
+    {
+        if($type === 'question'){
+            $question=$questionRepository->find($id);
+
+            //error404
+            if(!$question){
+                $this->createNotFoundException(('Aucun question sous cet ID'));
+            }
+            $questionId = $question->getId();
+
+        }else{
+            $reponse=$reponseRepository->find($id);
+
+              //error404
+              if(!$reponse){
+                $this->createNotFoundException(('Aucun reponse sous cet ID'));
+            }
+            $questionId = $reponse->getQuestion()->getId();
+        }
+
+        $token =$request->request->get('_token');
+
+        if($this->isCsrfTokenValid("reportQA-$type-$id", $token)){
+
+            /** @var User $user */
+            $user = $this->getUser();
+            
+            $email = (new TemplatedEmail())
+                ->from(new Address($user->getEmail(), $user->getNom()))
+                ->to('report@faq.test')
+                ->subject('Report enquiry')
+                ->htmlTemplate('emails/report.html.twig')
+                ->context([
+                    'nom' => $user->getNom(),
+                    'url' => $this->generateURL(
+                        'question_details',
+                        ['id' => $questionId],
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    )
+                ])
+            ;    
+            $mailer->send($email);
     
+            $this->addFlash('success', "Report sent! Snitch..."); 
+
+        }else {
+            $this->addFlash('error', 'Jeton CSRF invalide');
+
+        }
+    
+        return $this->redirectToRoute('question_details',[
+            'id'=>$questionId
+        ]);
+    }
+
 }
 
