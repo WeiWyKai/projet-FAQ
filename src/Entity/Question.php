@@ -32,6 +32,9 @@ class Question
     #[ORM\JoinColumn(nullable: false)]
     private ?User $utilisateur = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $date_edit = null;
+
     public function __construct()
     {
         $this->reponses = new ArrayCollection();
@@ -59,7 +62,7 @@ class Question
         return $this->contenu;
     }
 
-    public function setContenu(string $contenu): static
+    public function setContenu(?string $contenu): static
     {
         $this->contenu = $contenu;
 
@@ -116,6 +119,18 @@ class Question
     public function setUtilisateur(?User $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function getDateEdit(): ?\DateTimeInterface
+    {
+        return $this->date_edit;
+    }
+
+    public function setDateEdit(?\DateTimeInterface $date_edit): static
+    {
+        $this->date_edit = $date_edit;
 
         return $this;
     }

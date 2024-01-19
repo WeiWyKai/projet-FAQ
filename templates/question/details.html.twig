@@ -4,9 +4,14 @@
 
 {% block body %}
 
-  {% for question in app.flashes('success') %}
+  {% for message in app.flashes('success') %}
     <div class="alert alert-success m-3">
-      {{ question }}
+      {{ message }}
+    </div>
+  {% endfor %}
+  {% for message in app.flashes('error') %}
+    <div class="alert alert-danger m-3">
+      {{ message }}
     </div>
   {% endfor %}
 
@@ -14,7 +19,31 @@
     <h1>"{{ question.titre }}"</h1>
     <h2>de <span class="fst-italic text-secondary"><u>{{ question.utilisateur.nom }}</u></span></h2>
     <small class="text-end d-block fst-italic">Posté le {{ question.dateCreation|date("d/m/Y") }}</small>
-    <p class="m-3 p-3 border border-dark rounded-2 shadow"> {{ question.contenu }}</p>
+
+    {% if question.dateEdit != null %}
+      <small class="text-end d-block fst-italic">Modifié le {{ question.dateEdit|date("d/m/Y à H:i:s") }}</small>
+    {% endif %}
+      <a class="text-end d-block fst-italic" href="">Signaler la question</a>
+    <p class="m-3 p-4 border border-dark rounded-2 shadow"> {{ question.contenu }}</p>
+
+    {% if is_granted('EDIT_QUESTION', question) %}
+      <a class="btn btn-outline-primary fst-italic mb-2" href="{{path('edit_question',{id:question.id})}}">Modifier ma question</a>
+    {% endif %}
+
+    {% if is_granted('DELETE_QUESTION', question) %}
+
+      <form
+        action="{{ path('delete_question', { id: question.id }) }}"
+        method="post"
+        onsubmit="return confirm('Êtes vous sûr de vouloir supprimer cette question?')"
+        >
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete_question') }}">
+        <button type="submit" class="btn fst-italic btn-outline-danger">Supprimer ma question</button>
+      </form>
+    {# <a class="btn btn-outline-primary fst-italic" href="">Modifier ma question</a>
+    <a class="btn btn-outline-danger fst-italic" href="">Supprimer ma question</a> #}
+    {% endif %}
   </div>  
 
   {% if reponses == null %}
@@ -37,13 +66,13 @@
   {% for reponse in reponses %}
     <div class="container mx-auto mb-2 p-3 border  rounded-2 shadow 
     {% if question.utilisateur.id == reponse.utilisateur.id %}
-      text-light border-4 border-danger bg-secondary
+       border-4 border-danger
     {% else %}
       border-dark bg-light
     {% endif %}
     ">
       <div class="row">
-        <div class="col-3">
+        <div class="col-2 border-end ">
           <img src="{{asset(reponse.utilisateur.avatar)}}" style="height:125px; width:125px" >
           <p class="fw-bold fst-italic"> {{ reponse.utilisateur.nom}}</p>
           {% if question.utilisateur.id == reponse.utilisateur.id %}
@@ -53,18 +82,46 @@
           {% if reponse.dateEdit is not null %}
           <small class="fst-italic d-block"> Modifié le {{ reponse.dateEdit|date("d/m/Y à H:i:s") }}</small>
           {% endif %}
+          <a class="fst-italic d-block" href=""> Signaler la réponse</a>
         </div>        
-        <div class="col-7 align-self-center">
-          - {{reponse.contenu}}
+        <div class="col-8 px-4 align-self-center">
+          {{reponse.contenu}}
+
+          {# Bouton de vote #}
+          <div class="d-flex justify-content-end align-self-end">
+            Nombre de votes : {{ reponse.voters|length }}
+            {% if is_granted('REPONSE_VOTE', reponse) %}
+              <form
+                action="{{ path('vote_reponse', { id: reponse.id }) }}"
+                method="post"
+                class="d-flex" 
+              >
+                <input type="hidden" name="_token" value="{{ csrf_token('vote-'~ reponse.id) }}"> 
+                <button type="submit" class="btn btn-outline-success mx-3 flex-grow-1">Voter</button>
+              </form>
+            {% endif %}
+          </div>
         </div>
         {# condition if normale #}
         {# {% if reponse.utilisateur is same as(app.user) %} #}
-        {% if is_granted('REPONSE_VIEW', reponse) %}
-          <div class="col-2">
-            <a class="d-block btn btn-primary my-3" href="{{path('edit_reponse',{id:reponse.id})}}">Modifier</a>
-            <a class="d-block btn btn-danger" href="{{path('delete_reponse', {id:reponse.id})}}">Supprimer</a>
-          </div>
-        {% endif %}
+        <div class="col-2 align-self-center">
+          {% if is_granted('REPONSE_VIEW', reponse) %}
+            <a class="d-block btn btn-primary mb-4" href="{{path('edit_reponse',{id:reponse.id})}}">Modifier</a>
+          {% endif %}
+          {% if is_granted('REPONSE_DELETE', reponse) %}
+            <form
+              action="{{ path('delete_reponse', { id: reponse.id }) }}"
+              method="post"
+              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?')"
+              class="d-flex" 
+            >
+              <input type="hidden" name="_method" value="DELETE">
+              {# Unicité du token : il faut concaténer avec le "~"  #}
+              <input type="hidden" name="_token" value="{{ csrf_token('reponse_delete-'~ reponse.id) }}"> 
+              <button type="submit" class="btn btn-danger flex-grow-1">Supprimer</button>
+            </form>
+          {% endif %}
+        </div>
       </div>
     </div>  
   {% endfor %}

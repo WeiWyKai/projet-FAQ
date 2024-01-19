@@ -11,6 +11,7 @@ use App\Repository\ReponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -80,15 +81,23 @@ class QuestionController extends AbstractController
 
             //On reclone notre objet formulaire vide dans l'objet départ
             $answerForm = clone $emptyForm;
+
             return $this->redirectToRoute('question_details', [
                 'id' => $question->getId()
             ]);
         }
+        //Verifie si l'utilisateur connecté a eja voté pour une reponse a cette question
+            $user = $this->getUser();
+            if($user !== null)
+            {
+                $hasVoted = $reponseRepository->hasVoted($user, $question);
+            }
 
         return $this->render('question/details.html.twig', [
             'question' => $question,
             'reponses' =>$reponses,
-            'answerForm' => $answerForm
+            'answerForm' => $answerForm,
+            'hasVoted' => $hasVoted ?? false //Coalescence des nuls
         ]);
     }
     #[IsGranted('ADD_QUESTION',null, 'Connecter vous ou inscriver vous pour poser une question.')]
@@ -120,4 +129,60 @@ class QuestionController extends AbstractController
             'questionForm' =>$questionForm            
         ]);
     }   
+
+    #[IsGranted('EDIT_QUESTION','question' , 'Modification impossible ')]
+    #[Route('/question/{id}/edit', name: 'edit_question', requirements: ['id' => '\d+'])]
+    public function editReponse(Request $request, EntityManagerInterface $entityManager, Question $question): Response
+    {
+        $editForm = $this->createForm(QuestionFormType::class, $question,[
+            'labelButton' => ' Modifier ma réponse'
+        ]);
+        $editForm->handleRequest($request);
+
+        
+        if ($editForm->isSubmitted() && $editForm->isValid()){
+
+            $question->setDateEdit(new \DateTime());
+         
+            $entityManager->persist($question);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Question modifiée!');
+
+            return $this->redirectToRoute('question_details', [
+                'id' => $question->getId()
+            ]);
+        }
+        return $this->render('question/edit.html.twig', [
+            'editForm' => $editForm
+        ]);
+    }
+    
+    #[IsGranted('DELETE_QUESTION','question' , 'Suppression impossible ')]
+    #[Route('/question/{id}/delete', name: 'delete_question', requirements: ['id' => '\d+'])]
+    public function deleteQuestion(Request $request, EntityManagerInterface $entityManager, Question $question): RedirectResponse
+    {
+        //Récupère des champs cachés dans le formulaire
+        $token = $request->request->get('_token');
+        $method = $request->request->get('_method');
+
+        //Vérifie si la méthode et le jeton reçu sont corrects
+        if ($method === 'DELETE' && $this->isCsrfTokenValid('delete_question', $token)){
+
+            //Effectue la suppression
+            $entityManager->remove($question);
+            $entityManager->flush();
+            
+            $this->addFlash('success', 'Question supprimée!!! ');
+
+            return $this->redirectToRoute('all_questions');
+        }
+
+        //Sinon on génère un message d'erreur et on redirige l'utilisateur vers le détail de la question
+        $this->addFlash('error', 'Vous ne pouvez pas supprimmer cette question');
+
+        return $this->redirectToRoute('question_details', [
+            'id' => $question->getId()
+        ]);
+    }
 }

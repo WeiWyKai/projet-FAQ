@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+
+<h1 class="m-3"> Liste des utilisateurs</h1>
+
+  {% for message in app.flashes('success') %}
+    <div class="alert alert-success m-3">
+      {{ message }}
+    </div>
+  {% endfor %}
+   
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Avatar</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Action</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr class=" {% if'ROLE_ADMIN' in user.roles %} border border-warning border-3 {% endif %}">
+                    <td><img style="height:125px; width:125px" src="{{ asset(user.avatar) }}" alt="{{ user.nom }}"></td>
+                    <td class="fst-italic">{{ user.nom }}</td>
+                    <td class="fst-italic">{{ user.email }}</td>
+                    <td>
+                        <form
+                            action="{{ path('a_delete_user', { id: user.id }) }}"
+                            method="post"
+                            onsubmit="return confirm('Êtes vous sûr de vouloir supprimer cet utilisateur?')"
+                        >
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_user-'~ user.id) }}">
+                            <button type="submit" class="btn btn-danger m-2">Supprimer </button>
+                        </form>
+
+                        {% if 'ROLE_ADMIN' not in user.roles %}
+                            {# <form
+                                action="{{ path('a_name_admin', { id: user.id }) }}"
+                                method="post"
+                                onsubmit="return confirm('Êtes vous sûr de vouloir supprimer cet utilisateur?')"
+                            >
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_user-'~ user.id) }}">
+                                <button type="submit" class="btn btn-outline-warning m-2"> Nommer Admin </button>
+                            </form> #}
+                            <a href="{{path('name_admin', {id: user.id})}}" class="btn btn-outline-warning m-2">Nommer Admin</a>
+                        {% endif %}
+                    </td>
+                        
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

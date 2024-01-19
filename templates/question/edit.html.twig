@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification de Question{% endblock %}
+
+{% block body %}
+
+  {% for question in app.flashes('success') %}
+    <div class="alert alert-success m-3">
+      {{ question }}
+    </div>
+  {% endfor %}
+
+  <div class="m-5">
+    {{ form(editForm) }}
+  </div>
+    
+{% endblock %}

@@ -54,10 +54,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    #[ORM\ManyToMany(targetEntity: Reponse::class, inversedBy: 'voters')]
+    private Collection $votes;
+
     public function __construct()
     {
         $this->questions = new ArrayCollection();
         $this->reponses = new ArrayCollection();
+        $this->votes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -239,6 +243,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reponse>
+     */
+    public function getVotes(): Collection
+    {
+        return $this->votes;
+    }
+
+    public function addVote(Reponse $vote): static
+    {
+        if (!$this->votes->contains($vote)) {
+            $this->votes->add($vote);
+        }
+
+        return $this;
+    }
+
+    public function removeVote(Reponse $vote): static
+    {
+        $this->votes->removeElement($vote);
 
         return $this;
     }

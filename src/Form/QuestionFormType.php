@@ -32,15 +32,12 @@ class QuestionFormType extends AbstractType
             ])
 
             ->add('contenu',TextareaType::class,[
+                'required' => false,
                 'label' => 'Les détails de votre question: ',
                 'attr' => [
                     'rows' => 10
                 ],
                 'constraints'=> [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner votre message.',
-
-                    ]),
                     New Length([
                         'min' => 10,
                         'minMessage' => '{{ limit }} caractères minimum'
@@ -49,7 +46,7 @@ class QuestionFormType extends AbstractType
             ])   
                      
             ->add('save', SubmitType::class, [
-                'label' => 'Valider votre question',
+                'label' => $options['labelButton'],
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ],
@@ -61,6 +58,7 @@ class QuestionFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Question::class,
+            'labelButton' =>'Poster ma question'
         ]);
     }
 }

@@ -23,13 +23,14 @@
   {# <a href="{{path('delete_profil',{id:user.id})}}" class="btn btn-outline-danger d-block mx-5" onclick= "return confirm('Vous êtes sur le point de supprimer votre compte. Cliquer OK pour confirmer.')" >Supprimer mon compte</a> #}
 
   <form
-    action ="{{path('delete_profil')}}"
+    action ="{{path('delete_profil',{id:user.id})}}"
     method="post"
     onsubmit="return confirm('Vous êtes sur le point de supprimer votre compte. Cliquer OK pour confirmer.')"
+    class="d-flex justify-content-center"
   >
     <input type="hidden" name="_method" value="DELETE">
     <input type="hidden" name="_token" value="{{ csrf_token('delete_user') }}">
-    <button type="submit" class="btn btn-danger">Supprimer mon compte</button>
+    <button type="submit" class="btn w-100 btn-outline-danger mx-5 ">Supprimer mon compte</button>
   </form>
     
 {% endblock %}

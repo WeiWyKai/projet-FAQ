@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Reponse;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Repository\UserRepository;
 use App\Service\UploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +26,7 @@ class UserController extends AbstractController
     {
         
     }
+
     #[Route('/user/profil', name: 'edit_profil')]
     public function profil(Request $request, UploadService $uploadService): Response
     {   /** @var User $user */
@@ -63,7 +66,6 @@ class UserController extends AbstractController
         $method = $request->request->get('_method');
 
         if ($method === 'DELETE' && $this->isCsrfTokenValid('delete_user', $token)){
-            
             $this->entityManager->remove($user);
             $this->entityManager->flush();
             
@@ -89,4 +91,6 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('edit_profil');
     }
+    
 }
+
