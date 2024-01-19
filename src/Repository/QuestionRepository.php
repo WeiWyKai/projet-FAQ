@@ -21,6 +21,20 @@ class QuestionRepository extends ServiceEntityRepository
         parent::__construct($registry, Question::class);
     }
 
+    public function getQuestionsOnFire(){
+
+        // "SELECT question. *, COUNT(reponse.id) AS votes FROM question INNER JOIN reponse on reponse.question_id= question.id GROUP by question.id HAVING COUNT(reponse.id)>6;"
+
+        return $this->createQueryBuilder('question')
+            ->innerJoin('question.reponses', 'reponse')
+            ->groupBy('question.id')
+            ->having('COUNT(reponse.id)>6')
+            ->orderBy('COUNT(reponse.id)','DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Question[] Returns an array of Question objects
 //     */

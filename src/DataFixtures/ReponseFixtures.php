@@ -24,9 +24,9 @@ class ReponseFixtures extends Fixture implements DependentFixtureInterface
         $faker= Faker\Factory::create('fr_FR');
 
         //Création de 1000reponses
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 1200; $i++) {
 
-            $number = $faker->numberBetween(0, 49); 
+            $number = $faker->numberBetween(0, 74); 
             $user=$this->getReference("user-$number"); 
             $question=$this->getReference("question-{$faker->numberBetween(0, 199)}");
             $dateCreationQuestion = $question->getDateCreation()->format('Y-m-d H:i:s');
@@ -36,6 +36,14 @@ class ReponseFixtures extends Fixture implements DependentFixtureInterface
             $reponse->setDateCreation($faker->dateTimeBetween($dateCreationQuestion, 'now'));
             $reponse->setUtilisateur($user);
             $reponse->setQuestion($question);
+
+            //Ajout de votes à ma réponse
+            for($j = 0; $j< $faker->numberBetween(0, 15);$j++)
+            {
+                $user = $this->getReference("user-{$faker->numberBetween(0,74)}");
+
+                $reponse->addVoter($user);
+            }
 
             $manager->persist($reponse);
         }

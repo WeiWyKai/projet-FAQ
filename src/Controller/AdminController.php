@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Reponse;
 use App\Entity\User;
+use App\Repository\QuestionRepository;
+use App\Repository\ReponseRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,5 +80,25 @@ class AdminController extends AbstractController
         $this->addFlash('success', "L'utilisateur {$user->getNom()} est maintenant un Admin");
 
         return $this->redirectToRoute('a_users');
+    }
+
+    #[Route('/reporting/questions', name:'reporting_questions')]
+    public function reportingQuestions(QuestionRepository $questionRepository) :Response
+    {   
+        $questions = $questionRepository->getQuestionsOnFire();
+        
+        return $this->render('/admin/reports/questions.html.twig',[
+            'questions' => $questions
+        ]);
+    }
+
+    #[Route('/reporting/reponses', name:'reporting_reponses')]
+    public function reportingReponses(ReponseRepository $reponseRepository) :Response
+    {   
+        $reponses = $reponseRepository->getReponsesOnFire();
+        
+        return $this->render('/admin/reports/reponses.html.twig',[
+            'reponses' => $reponses
+        ]);
     }
 }

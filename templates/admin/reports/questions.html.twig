@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Questions on FIRE!!!{% endblock %}
+
+{% block body %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Titre</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Email</th>
+        <th scope="col">Nombre de réponses</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for question in questions %}
+        <tr>
+          <td>{{question.titre}}</td>
+          <td class="fst-italic">{{ question.utilisateur.nom }}</td>
+          <td class="fst-italic">{{ question.dateCreation|date('d.m.Y') }}</td>
+          <td class="fst-italic">{{ question.reponses|length }}</td>
+          <td>
+            <a href="{{path('question_details',{id: question.id})}}" >Voir la question</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

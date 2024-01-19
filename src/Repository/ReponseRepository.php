@@ -38,6 +38,19 @@ class ReponseRepository extends ServiceEntityRepository
 
         Return count($results) > 0;
     }
+
+    public function getReponsesOnFire():array
+    {
+
+        return $this->createQueryBuilder('reponse')
+            ->innerJoin('reponse.voters', 'voters')
+            ->groupBy('reponse.id')
+            ->having('COUNT(voters)>10')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return Reponse[] Returns an array of Reponse objects
 //     */

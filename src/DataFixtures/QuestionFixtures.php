@@ -28,7 +28,7 @@ class QuestionFixtures extends Fixture implements DependentFixtureInterface
           //Création de 200 questions
           for ($i = 0; $i < 200; $i++) {
 
-            $number = $faker->numberBetween(0, 49); //0 à 49 car objet $user avec 50 valeur
+            $number = $faker->numberBetween(0, 74); //0 à 49 car objet $user avec 50 valeur
             $user=$this->getReference("user-$number");
 
             $question = new Question();

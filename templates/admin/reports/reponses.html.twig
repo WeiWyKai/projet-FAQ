@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Questions on FIRE!!!{% endblock %}
+
+{% block body %}
+  <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Réponse</th>
+                <th scope="col">Auteur</th>
+                <th scope="col">Date de Création</th>
+                <th scope="col">Nombre de Votes</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for reponse in reponses %}
+                <tr>
+                    <td>{{reponse.contenu}}</td>
+                    <td class="fst-italic">{{ reponse.utilisateur.nom }}</td>
+                    <td class="fst-italic">{{ reponse.dateCreation|date('d.m.Y') }}</td>
+                    <td>{{ reponse.voters|length}} votes</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -20,7 +20,7 @@ class UserFixtures extends Fixture
         $faker= Faker\Factory::create();
 
         //Création de 50 Utilisateurs
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 75; $i++) {
             $user = new User();
             $user->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
             $user->setEmail($faker->email);
@@ -31,7 +31,16 @@ class UserFixtures extends Fixture
             //Enregistre l'objet $user dans une référence avec un nom unique!
             $this->addReference("user-$i", $user);
         }
+        //Création d'un Admin de test
+        $admin = new User();
+        $admin->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
+        $admin->setNom('WeiWyKai');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setEmail('WeiWyKai@Wei.com');
+        $admin->setIsVerified(true);
 
+        $manager->persist($admin);
+        
         //MAJ BDD
         $manager->flush();
     }

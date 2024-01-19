@@ -3,8 +3,15 @@
 {% block title %}Bienvenue à l'admnistration{% endblock %}
 
 {% block body %}
-
-<a href="{{path('a_users')}}" > liste des utilisateurs</a>
-<a href="{{path('')}}" > Questions on FIRE</a>
-<a href="{{path('')}}" > Réponss on FIRE</a>
+<ul>
+  <li>
+    <a href="{{path('a_users')}}" > liste des utilisateurs</a>
+  </li>
+  <li>
+    <a href="{{path('reporting_questions')}}" > Questions on FIRE</a>
+  </li>
+  <li>
+    <a href="{{path('reporting_reponses')}}" > Réponses on FIRE</a>
+  </li>
+</ul>
 {% endblock %}
